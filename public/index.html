@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Pixel Buddy - Your immortal AI-powered Tamagotchi that lives forever">
+  <title>🐾 Pixel Buddy - Immortal Tamagotchi</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#FF6B9D">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Courier New', monospace;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #fff;
+      padding: 20px;
+    }
+
+    #container {
+      background: #2a2a2a;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      max-width: 600px;
+      width: 100%;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    #petCanvas {
+      width: 100%;
+      max-width: 400px;
+      height: 400px;
+      margin: 0 auto;
+      display: block;
+      background: #1a1a1a;
+      border-radius: 10px;
+      border: 4px solid #FF6B9D;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .stat {
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 10px;
+      border: 2px solid #444;
+    }
+
+    .stat-label {
+      font-size: 0.9em;
+      opacity: 0.8;
+      margin-bottom: 5px;
+    }
+
+    .stat-bar {
+      background: #333;
+      height: 20px;
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .stat-fill {
+      height: 100%;
+      transition: width 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8em;
+      font-weight: bold;
+    }
+
+    .stat-fill.hunger { background: linear-gradient(90deg, #ff6b6b, #ee5a6f); }
+    .stat-fill.happiness { background: linear-gradient(90deg, #ffd93d, #f6c23e); }
+    .stat-fill.energy { background: linear-gradient(90deg, #6bcf7f, #51b368); }
+    .stat-fill.hygiene { background: linear-gradient(90deg, #4ecdc4, #44a3c6); }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border: none;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      font-size: 1em;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-family: 'Courier New', monospace;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .multiplayer {
+      margin-top: 20px;
+      padding: 20px;
+      background: #1a1a1a;
+      border-radius: 10px;
+      border: 2px solid #667eea;
+    }
+
+    .multiplayer h3 {
+      margin-bottom: 15px;
+      color: #667eea;
+    }
+
+    .world-code {
+      background: #2a2a2a;
+      padding: 15px;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 1.5em;
+      letter-spacing: 3px;
+      margin: 10px 0;
+      border: 2px dashed #667eea;
+    }
+
+    .visitor-info {
+      background: #0f0f0f;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 10px;
+      border: 2px solid #4ecdc4;
+    }
+
+    .chat {
+      margin-top: 20px;
+      padding: 20px;
+      background: #1a1a1a;
+      border-radius: 10px;
+    }
+
+    #chatInput {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 2px solid #444;
+      background: #2a2a2a;
+      color: white;
+      font-family: 'Courier New', monospace;
+      margin-top: 10px;
+    }
+
+    .message {
+      background: #2a2a2a;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+      border-left: 4px solid #FF6B9D;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      font-size: 1.2em;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .emoji {
+      display: inline-block;
+      animation: bounce 1s infinite;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>🐾 Pixel Buddy</h1>
+
+    <div id="loading" class="loading">
+      <div class="emoji">🥚</div>
+      <p>Loading your pet...</p>
+    </div>
+
+    <div id="game" style="display: none;">
+      <!-- Pet Display -->
+      <canvas id="petCanvas" width="400" height="400"></canvas>
+
+      <!-- Pet Name -->
+      <div style="text-align: center; margin: 15px 0;">
+        <h2 id="petName">Buddy</h2>
+        <button onclick="renamePet()">Rename</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">🍖 Hunger</div>
+          <div class="stat-bar">
+            <div class="stat-fill hunger" id="hungerBar" style="width: 50%">50</div>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">😊 Happiness</div>
+          <div class="stat-bar">
+            <div class="stat-fill happiness" id="happinessBar" style="width: 50%">50</div>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">⚡ Energy</div>
+          <div class="stat-bar">
+            <div class="stat-fill energy" id="energyBar" style="width: 50%">50</div>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">🧼 Hygiene</div>
+          <div class="stat-bar">
+            <div class="stat-fill hygiene" id="hygieneBar" style="width: 50%">50</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button onclick="performAction('feed')">🍖 Feed</button>
+        <button onclick="performAction('play')">🎾 Play</button>
+        <button onclick="performAction('clean')">🧼 Clean</button>
+        <button onclick="performAction('sleep')">😴 Sleep</button>
+      </div>
+
+      <!-- Multiplayer -->
+      <div class="multiplayer">
+        <h3>🌍 Multiplayer</h3>
+        <div class="actions">
+          <button onclick="toggleWorld()">
+            <span id="worldToggleText">Open World</span>
+          </button>
+          <button onclick="visitWorld()">Visit Friend</button>
+        </div>
+
+        <div id="worldCodeDisplay" style="display: none;">
+          <div class="world-code" id="worldCode"></div>
+          <p style="text-align: center; opacity: 0.8; font-size: 0.9em;">
+            Share this code with friends!
+          </p>
+        </div>
+
+        <div id="visitorDisplay" style="display: none;" class="visitor-info">
+          <strong>👋 Visitor:</strong> <span id="visitorName"></span><br>
+          <span id="visitorStats"></span>
+        </div>
+      </div>
+
+      <!-- AI Chat -->
+      <div class="chat">
+        <h3>💬 Talk to your pet</h3>
+        <div id="chatMessages"></div>
+        <input type="text" id="chatInput" placeholder="Say something to your pet..." onkeypress="handleChatKey(event)">
+        <button onclick="sendMessage()" style="margin-top: 10px; width: 100%;">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================================
+    // GLOBALS
+    // ============================================================================
+    const API = window.location.origin + '/api';
+    const canvas = document.getElementById('petCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let pet = null;
+    let visitorPet = null;
+    let userId = localStorage.getItem('pixelBuddyUserId');
+    let animationFrame = 0;
+    let visitorRefreshInterval = null;
+
+    // Generate user ID if doesn't exist
+    if (!userId) {
+      userId = 'user-' + Math.random().toString(36).substring(2, 15);
+      localStorage.setItem('pixelBuddyUserId', userId);
+    }
+
+    // ============================================================================
+    // INITIALIZATION
+    // ============================================================================
+    async function init() {
+      try {
+        await loadPet();
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('game').style.display = 'block';
+        startAnimation();
+        startStatDecay();
+      } catch (error) {
+        console.error('Initialization error:', error);
+        document.getElementById('loading').innerHTML = '<p>❌ Failed to load pet. Check console.</p>';
+      }
+    }
+
+    async function loadPet() {
+      const response = await fetch(`${API}/pet/${userId}`);
+      pet = await response.json();
+      updateUI();
+    }
+
+    function updateUI() {
+      document.getElementById('petName').textContent = pet.name;
+      updateStat('hunger', pet.hunger);
+      updateStat('happiness', pet.happiness);
+      updateStat('energy', pet.energy);
+      updateStat('hygiene', pet.hygiene);
+
+      // Update world toggle
+      if (pet.world_open) {
+        document.getElementById('worldToggleText').textContent = 'Close World';
+        document.getElementById('worldCodeDisplay').style.display = 'block';
+        document.getElementById('worldCode').textContent = pet.world_code;
+      } else {
+        document.getElementById('worldToggleText').textContent = 'Open World';
+        document.getElementById('worldCodeDisplay').style.display = 'none';
+      }
+    }
+
+    function updateStat(stat, value) {
+      const bar = document.getElementById(`${stat}Bar`);
+      bar.style.width = value + '%';
+      bar.textContent = Math.round(value);
+    }
+
+    // ============================================================================
+    // RENDERING
+    // ============================================================================
+    function startAnimation() {
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw main pet
+        if (pet) {
+          drawPet(pet, canvas.width / 2, canvas.height / 2, 150);
+        }
+
+        // Draw visitor pet
+        if (visitorPet) {
+          drawPet(visitorPet, canvas.width - 100, canvas.height - 100, 80);
+
+          // Draw visitor label
+          ctx.fillStyle = '#4ecdc4';
+          ctx.font = 'bold 14px Courier New';
+          ctx.textAlign = 'center';
+          ctx.fillText('👋 ' + visitorPet.name, canvas.width - 100, canvas.height - 20);
+        }
+
+        animationFrame++;
+        requestAnimationFrame(render);
+      }
+      render();
+    }
+
+    function drawPet(petData, x, y, size) {
+      // Simple animated pixel pet (placeholder - replace with sprite sheet)
+      const bounce = Math.sin(animationFrame * 0.05) * 10;
+
+      // Body
+      ctx.fillStyle = petData.color || '#FF6B9D';
+      ctx.beginPath();
+      ctx.arc(x, y + bounce, size / 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Eyes
+      const eyeOffset = size / 6;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(x - eyeOffset, y - eyeOffset + bounce, size / 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x + eyeOffset, y - eyeOffset + bounce, size / 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Pupils
+      const pupilX = Math.sin(animationFrame * 0.02) * 3;
+      const pupilY = Math.cos(animationFrame * 0.03) * 3;
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(x - eyeOffset + pupilX, y - eyeOffset + bounce + pupilY, size / 20, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x + eyeOffset + pupilX, y - eyeOffset + bounce + pupilY, size / 20, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Mouth (based on happiness)
+      const happiness = petData.happiness || 50;
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      if (happiness > 60) {
+        // Happy smile
+        ctx.arc(x, y + eyeOffset + bounce, size / 6, 0.2, Math.PI - 0.2);
+      } else if (happiness < 40) {
+        // Sad frown
+        ctx.arc(x, y + size / 3 + bounce, size / 6, Math.PI + 0.2, Math.PI * 2 - 0.2, true);
+      } else {
+        // Neutral
+        ctx.moveTo(x - eyeOffset, y + eyeOffset + bounce);
+        ctx.lineTo(x + eyeOffset, y + eyeOffset + bounce);
+      }
+      ctx.stroke();
+
+      // Show emotion indicator
+      let emoji = '';
+      if (petData.hunger < 30) emoji = '🍖';
+      else if (petData.energy < 30) emoji = '💤';
+      else if (petData.hygiene < 30) emoji = '💩';
+      else if (petData.happiness > 80) emoji = '❤️';
+
+      if (emoji) {
+        ctx.font = size / 3 + 'px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(emoji, x, y - size / 2 - 20 + bounce);
+      }
+    }
+
+    // ============================================================================
+    // ACTIONS
+    // ============================================================================
+    async function performAction(action) {
+      try {
+        const response = await fetch(`${API}/pet/${pet.id}/action`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action })
+        });
+        pet = await response.json();
+        updateUI();
+      } catch (error) {
+        console.error('Action error:', error);
+        alert('Failed to perform action. Try again!');
+      }
+    }
+
+    async function renamePet() {
+      const newName = prompt('Enter new name (max 20 chars):', pet.name);
+      if (!newName || newName === pet.name) return;
+
+      try {
+        const response = await fetch(`${API}/pet/${pet.id}/rename`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: newName })
+        });
+        pet = await response.json();
+        updateUI();
+      } catch (error) {
+        console.error('Rename error:', error);
+        alert('Failed to rename pet.');
+      }
+    }
+
+    // ============================================================================
+    // MULTIPLAYER
+    // ============================================================================
+    async function toggleWorld() {
+      try {
+        const open = !pet.world_open;
+        const response = await fetch(`${API}/pet/${pet.id}/world`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ open })
+        });
+        const data = await response.json();
+        pet.world_open = data.world_open;
+        pet.world_code = data.world_code;
+        updateUI();
+
+        if (open) {
+          alert(`World opened! Share this code: ${pet.world_code}`);
+        }
+      } catch (error) {
+        console.error('Toggle world error:', error);
+        alert('Failed to toggle world.');
+      }
+    }
+
+    async function visitWorld() {
+      const code = prompt('Enter friend\'s world code (XXXX-XX):');
+      if (!code) return;
+
+      try {
+        const response = await fetch(`${API}/world/${code}`);
+        if (!response.ok) {
+          throw new Error('World not found or closed');
+        }
+        visitorPet = await response.json();
+
+        document.getElementById('visitorDisplay').style.display = 'block';
+        document.getElementById('visitorName').textContent = visitorPet.name;
+        document.getElementById('visitorStats').textContent =
+          `❤️ ${Math.round(visitorPet.happiness)} | ⚡ ${Math.round(visitorPet.energy)}`;
+
+        // Auto-refresh visitor pet every 10 seconds
+        if (visitorRefreshInterval) clearInterval(visitorRefreshInterval);
+        visitorRefreshInterval = setInterval(async () => {
+          if (!visitorPet) return;
+          try {
+            const res = await fetch(`${API}/world/${code}`);
+            visitorPet = await res.json();
+          } catch (e) {
+            console.error('Failed to refresh visitor pet');
+          }
+        }, 10000);
+
+      } catch (error) {
+        console.error('Visit error:', error);
+        alert('World not found or closed!');
+      }
+    }
+
+    function leaveWorld() {
+      visitorPet = null;
+      document.getElementById('visitorDisplay').style.display = 'none';
+      if (visitorRefreshInterval) {
+        clearInterval(visitorRefreshInterval);
+        visitorRefreshInterval = null;
+      }
+    }
+
+    // ============================================================================
+    // AI CHAT
+    // ============================================================================
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      if (!message) return;
+
+      addChatMessage('You', message, '#667eea');
+      input.value = '';
+
+      try {
+        const response = await fetch(`${API}/pet/${pet.id}/talk`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message })
+        });
+        const data = await response.json();
+        addChatMessage(pet.name, data.response, '#FF6B9D');
+      } catch (error) {
+        console.error('Chat error:', error);
+        addChatMessage('System', 'Failed to get response', '#ff6b6b');
+      }
+    }
+
+    function addChatMessage(sender, text, color) {
+      const messagesDiv = document.getElementById('chatMessages');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message';
+      msgDiv.style.borderLeftColor = color;
+      msgDiv.innerHTML = `<strong>${sender}:</strong> ${text}`;
+      messagesDiv.appendChild(msgDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function handleChatKey(event) {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    }
+
+    // ============================================================================
+    // STAT DECAY (simulate life)
+    // ============================================================================
+    function startStatDecay() {
+      setInterval(async () => {
+        // Decay stats slightly over time (every minute)
+        pet.hunger = Math.max(0, pet.hunger - 1);
+        pet.happiness = Math.max(0, pet.happiness - 0.5);
+        pet.energy = Math.max(0, pet.energy - 0.5);
+        pet.hygiene = Math.max(0, pet.hygiene - 0.5);
+        updateUI();
+
+        // Check for death conditions
+        const avgStats = (pet.hunger + pet.happiness + pet.energy + pet.hygiene) / 4;
+        if (avgStats < 10) {
+          alert('⚠️ Your pet needs urgent care!');
+        }
+      }, 60000); // Every minute
+    }
+
+    // ============================================================================
+    // START APP
+    // ============================================================================
+    init();
+  </script>
+</body>
+</html>
