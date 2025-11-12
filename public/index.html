@@ -2,194 +2,451 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="description" content="Pixel Buddy - Your immortal AI-powered Tamagotchi that lives forever">
-  <title>🐾 Pixel Buddy - Immortal Tamagotchi</title>
+  <title>Pixel Buddy - Immortal Tamagotchi</title>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#FF6B9D">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* ========================================
+       MOBILE-FIRST THEME SYSTEM
+       ======================================== */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Theme: Pastel Dream (Default) */
+    :root {
+      --primary: #FF6B9D;
+      --secondary: #FFD93D;
+      --accent: #6BCF7F;
+      --bg-light: #FFF9F0;
+      --bg-medium: #FFE5E5;
+      --bg-dark: #FFD1DC;
+      --text-dark: #4A4A4A;
+      --text-light: #FFFFFF;
+      --border: #FFC1D8;
+      --shadow: rgba(255, 107, 157, 0.15);
+
+      --stat-hunger: linear-gradient(90deg, #FF6B6B, #FF8E53);
+      --stat-happiness: linear-gradient(90deg, #FFD93D, #FFC93C);
+      --stat-energy: linear-gradient(90deg, #6BCF7F, #51C77A);
+      --stat-hygiene: linear-gradient(90deg, #4ECDC4, #45B7D1);
+
+      --border-radius: 16px;
+      --border-radius-sm: 12px;
+      --spacing-xs: 8px;
+      --spacing-sm: 12px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+    }
+
+    /* Theme: Retro Tamagotchi */
+    [data-theme="retro"] {
+      --primary: #00D9FF;
+      --secondary: #FF6EC7;
+      --accent: #FFF44F;
+      --bg-light: #1A1A2E;
+      --bg-medium: #16213E;
+      --bg-dark: #0F1620;
+      --text-dark: #FFFFFF;
+      --text-light: #00D9FF;
+      --border: #00D9FF;
+      --shadow: rgba(0, 217, 255, 0.3);
+
+      --stat-hunger: linear-gradient(90deg, #FF6EC7, #FF8EDB);
+      --stat-happiness: linear-gradient(90deg, #FFF44F, #FFEB3B);
+      --stat-energy: linear-gradient(90deg, #00D9FF, #00C4E6);
+      --stat-hygiene: linear-gradient(90deg, #7C4DFF, #9575CD);
+    }
+
+    /* Theme: Cozy Midnight */
+    [data-theme="midnight"] {
+      --primary: #A78BFA;
+      --secondary: #60A5FA;
+      --accent: #FCD34D;
+      --bg-light: #1E293B;
+      --bg-medium: #334155;
+      --bg-dark: #0F172A;
+      --text-dark: #F1F5F9;
+      --text-light: #CBD5E1;
+      --border: #475569;
+      --shadow: rgba(167, 139, 250, 0.2);
+
+      --stat-hunger: linear-gradient(90deg, #F472B6, #FB7185);
+      --stat-happiness: linear-gradient(90deg, #FCD34D, #FBBF24);
+      --stat-energy: linear-gradient(90deg, #60A5FA, #3B82F6);
+      --stat-hygiene: linear-gradient(90deg, #A78BFA, #8B5CF6);
+    }
+
+    /* Theme: Nature Garden */
+    [data-theme="nature"] {
+      --primary: #86EFAC;
+      --secondary: #FDE047;
+      --accent: #FB923C;
+      --bg-light: #FFFBEB;
+      --bg-medium: #FEF3C7;
+      --bg-dark: #FDE68A;
+      --text-dark: #365314;
+      --text-light: #166534;
+      --border: #BEF264;
+      --shadow: rgba(134, 239, 172, 0.2);
+
+      --stat-hunger: linear-gradient(90deg, #FB923C, #FDBA74);
+      --stat-happiness: linear-gradient(90deg, #FDE047, #FEF08A);
+      --stat-energy: linear-gradient(90deg, #86EFAC, #6EE7B7);
+      --stat-hygiene: linear-gradient(90deg, #60A5FA, #93C5FD);
+    }
+
+    /* ========================================
+       MOBILE-FIRST BASE STYLES
+       ======================================== */
+
     body {
       font-family: 'Courier New', monospace;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background: var(--bg-light);
       min-height: 100vh;
-      color: #fff;
-      padding: 20px;
+      color: var(--text-dark);
+      padding: var(--spacing-sm);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     #container {
-      background: #2a2a2a;
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-      max-width: 600px;
+      background: var(--bg-medium);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-md);
+      box-shadow: 0 8px 24px var(--shadow);
+      max-width: 100%;
       width: 100%;
+      margin: 0 auto;
     }
+
+    /* Desktop layout */
+    @media (min-width: 768px) {
+      body {
+        padding: var(--spacing-lg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #container {
+        max-width: 600px;
+        padding: var(--spacing-xl);
+      }
+    }
+
+    /* ========================================
+       TYPOGRAPHY
+       ======================================== */
 
     h1 {
       text-align: center;
-      font-size: 2em;
-      margin-bottom: 20px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      margin-bottom: var(--spacing-md);
+      color: var(--primary);
+      font-weight: bold;
     }
+
+    h2 {
+      font-size: clamp(1.2rem, 4vw, 1.5rem);
+      color: var(--text-dark);
+    }
+
+    h3 {
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      color: var(--primary);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    /* Hide title on small mobile screens */
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.2rem;
+        margin-bottom: var(--spacing-sm);
+      }
+    }
+
+    /* ========================================
+       CANVAS (RESPONSIVE)
+       ======================================== */
 
     #petCanvas {
       width: 100%;
-      max-width: 400px;
-      height: 400px;
-      margin: 0 auto;
+      max-width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      margin: 0 auto var(--spacing-md);
       display: block;
-      background: #1a1a1a;
-      border-radius: 10px;
-      border: 4px solid #FF6B9D;
+      background: var(--bg-dark);
+      border-radius: var(--border-radius);
+      border: 4px solid var(--primary);
       image-rendering: pixelated;
       image-rendering: crisp-edges;
+      box-shadow: 0 4px 12px var(--shadow);
+      touch-action: none;
     }
+
+    @media (min-width: 768px) {
+      #petCanvas {
+        max-width: 500px;
+      }
+    }
+
+    /* ========================================
+       STATS SECTION
+       ======================================== */
 
     .stats {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin: 20px 0;
+      grid-template-columns: 1fr;
+      gap: var(--spacing-sm);
+      margin: var(--spacing-md) 0;
+    }
+
+    @media (min-width: 480px) {
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
     }
 
     .stat {
-      background: #1a1a1a;
-      padding: 15px;
-      border-radius: 10px;
-      border: 2px solid #444;
+      background: var(--bg-light);
+      padding: var(--spacing-sm);
+      border-radius: var(--border-radius-sm);
+      border: 2px solid var(--border);
     }
 
     .stat-label {
-      font-size: 0.9em;
-      opacity: 0.8;
-      margin-bottom: 5px;
+      font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+      font-weight: 600;
+      margin-bottom: var(--spacing-xs);
+      color: var(--text-dark);
     }
 
     .stat-bar {
-      background: #333;
-      height: 20px;
-      border-radius: 5px;
+      background: var(--bg-medium);
+      height: 24px;
+      border-radius: 8px;
       overflow: hidden;
       position: relative;
+      border: 1px solid var(--border);
     }
 
     .stat-fill {
       height: 100%;
-      transition: width 0.3s ease;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.8em;
+      font-size: clamp(0.75rem, 2vw, 0.85rem);
       font-weight: bold;
+      color: var(--text-light);
+      position: relative;
+      overflow: hidden;
     }
 
-    .stat-fill.hunger { background: linear-gradient(90deg, #ff6b6b, #ee5a6f); }
-    .stat-fill.happiness { background: linear-gradient(90deg, #ffd93d, #f6c23e); }
-    .stat-fill.energy { background: linear-gradient(90deg, #6bcf7f, #51b368); }
-    .stat-fill.hygiene { background: linear-gradient(90deg, #4ecdc4, #44a3c6); }
-
-    .actions {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin: 20px 0;
+    /* Shimmer effect */
+    .stat-fill::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255,255,255,0.3) 50%,
+        transparent 100%
+      );
+      animation: shimmer 2s infinite;
     }
+
+    @keyframes shimmer {
+      to { left: 100%; }
+    }
+
+    .stat-fill.hunger { background: var(--stat-hunger); }
+    .stat-fill.happiness { background: var(--stat-happiness); }
+    .stat-fill.energy { background: var(--stat-energy); }
+    .stat-fill.hygiene { background: var(--stat-hygiene); }
+
+    /* ========================================
+       BUTTONS (TOUCH-OPTIMIZED)
+       ======================================== */
 
     button {
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: var(--primary);
       border: none;
-      color: white;
-      padding: 15px 20px;
-      border-radius: 10px;
-      font-size: 1em;
+      color: var(--text-light);
+      padding: clamp(12px, 3vw, 16px) clamp(16px, 4vw, 24px);
+      border-radius: var(--border-radius-sm);
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
       cursor: pointer;
-      font-weight: bold;
-      transition: transform 0.2s, box-shadow 0.2s;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       font-family: 'Courier New', monospace;
+      min-height: 44px;
+      min-width: 100px;
+      box-shadow: 0 2px 8px var(--shadow);
     }
 
     button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 12px var(--shadow);
+      filter: brightness(1.1);
     }
 
     button:active {
       transform: translateY(0);
+      box-shadow: 0 1px 4px var(--shadow);
     }
 
     button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+      transform: none;
     }
 
-    .multiplayer {
-      margin-top: 20px;
-      padding: 20px;
-      background: #1a1a1a;
-      border-radius: 10px;
-      border: 2px solid #667eea;
+    /* ========================================
+       ACTIONS GRID
+       ======================================== */
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-sm);
+      margin: var(--spacing-md) 0;
     }
 
-    .multiplayer h3 {
-      margin-bottom: 15px;
-      color: #667eea;
+    .actions button {
+      width: 100%;
+    }
+
+    /* ========================================
+       SECTIONS
+       ======================================== */
+
+    .multiplayer, .chat {
+      margin-top: var(--spacing-md);
+      padding: var(--spacing-md);
+      background: var(--bg-light);
+      border-radius: var(--border-radius);
+      border: 2px solid var(--border);
     }
 
     .world-code {
-      background: #2a2a2a;
-      padding: 15px;
-      border-radius: 5px;
+      background: var(--bg-medium);
+      padding: var(--spacing-md);
+      border-radius: var(--border-radius-sm);
       text-align: center;
-      font-size: 1.5em;
+      font-size: clamp(1.2rem, 4vw, 1.5rem);
       letter-spacing: 3px;
-      margin: 10px 0;
-      border: 2px dashed #667eea;
+      margin: var(--spacing-sm) 0;
+      border: 2px dashed var(--primary);
+      color: var(--primary);
+      font-weight: bold;
     }
 
     .visitor-info {
-      background: #0f0f0f;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 10px;
-      border: 2px solid #4ecdc4;
-    }
-
-    .chat {
-      margin-top: 20px;
-      padding: 20px;
-      background: #1a1a1a;
-      border-radius: 10px;
+      background: var(--bg-medium);
+      padding: var(--spacing-md);
+      border-radius: var(--border-radius-sm);
+      margin-top: var(--spacing-sm);
+      border: 2px solid var(--accent);
+      color: var(--text-dark);
     }
 
     #chatInput {
       width: 100%;
-      padding: 10px;
-      border-radius: 5px;
-      border: 2px solid #444;
-      background: #2a2a2a;
-      color: white;
+      padding: var(--spacing-sm);
+      border-radius: var(--border-radius-sm);
+      border: 2px solid var(--border);
+      background: var(--bg-medium);
+      color: var(--text-dark);
       font-family: 'Courier New', monospace;
-      margin-top: 10px;
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+      margin-top: var(--spacing-sm);
+      min-height: 44px;
+    }
+
+    #chatInput:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--shadow);
     }
 
     .message {
-      background: #2a2a2a;
-      padding: 10px;
-      border-radius: 5px;
-      margin: 10px 0;
-      border-left: 4px solid #FF6B9D;
+      background: var(--bg-medium);
+      padding: var(--spacing-sm);
+      border-radius: var(--border-radius-sm);
+      margin: var(--spacing-sm) 0;
+      border-left: 4px solid var(--primary);
+      color: var(--text-dark);
     }
 
     .loading {
       text-align: center;
-      padding: 40px;
-      font-size: 1.2em;
+      padding: var(--spacing-xl);
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      color: var(--text-dark);
     }
+
+    /* ========================================
+       THEME SWITCHER
+       ======================================== */
+
+    .theme-switcher {
+      position: fixed;
+      top: var(--spacing-sm);
+      right: var(--spacing-sm);
+      z-index: 1000;
+      background: var(--bg-medium);
+      border-radius: var(--border-radius-sm);
+      padding: var(--spacing-xs);
+      box-shadow: 0 4px 12px var(--shadow);
+      border: 2px solid var(--border);
+    }
+
+    .theme-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      margin: 4px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      min-width: auto;
+      min-height: auto;
+      padding: 0;
+    }
+
+    .theme-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .theme-btn.active {
+      box-shadow: 0 0 0 3px var(--primary);
+      transform: scale(1.15);
+    }
+
+    .theme-btn.pastel { background: linear-gradient(135deg, #FF6B9D, #FFD93D); }
+    .theme-btn.retro { background: linear-gradient(135deg, #00D9FF, #FF6EC7); }
+    .theme-btn.midnight { background: linear-gradient(135deg, #A78BFA, #60A5FA); }
+    .theme-btn.nature { background: linear-gradient(135deg, #86EFAC, #FDE047); }
+
+    /* ========================================
+       ANIMATIONS
+       ======================================== */
 
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
@@ -200,11 +457,28 @@
       display: inline-block;
       animation: bounce 1s infinite;
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #game {
+      animation: fadeIn 0.5s ease-out;
+    }
   </style>
 </head>
 <body>
+  <!-- Theme Switcher -->
+  <div class="theme-switcher">
+    <button class="theme-btn pastel active" data-theme="pastel" aria-label="Pastel theme" title="Pastel Dream"></button>
+    <button class="theme-btn retro" data-theme="retro" aria-label="Retro theme" title="Retro Tamagotchi"></button>
+    <button class="theme-btn midnight" data-theme="midnight" aria-label="Midnight theme" title="Cozy Midnight"></button>
+    <button class="theme-btn nature" data-theme="nature" aria-label="Nature theme" title="Nature Garden"></button>
+  </div>
+
   <div id="container">
-    <h1>🐾 Pixel Buddy</h1>
+    <h1>Pixel Buddy</h1>
 
     <div id="loading" class="loading">
       <div class="emoji">🥚</div>
@@ -224,25 +498,25 @@
       <!-- Stats -->
       <div class="stats">
         <div class="stat">
-          <div class="stat-label">🍖 Hunger</div>
+          <div class="stat-label">Hunger</div>
           <div class="stat-bar">
             <div class="stat-fill hunger" id="hungerBar" style="width: 50%">50</div>
           </div>
         </div>
         <div class="stat">
-          <div class="stat-label">😊 Happiness</div>
+          <div class="stat-label">Happiness</div>
           <div class="stat-bar">
             <div class="stat-fill happiness" id="happinessBar" style="width: 50%">50</div>
           </div>
         </div>
         <div class="stat">
-          <div class="stat-label">⚡ Energy</div>
+          <div class="stat-label">Energy</div>
           <div class="stat-bar">
             <div class="stat-fill energy" id="energyBar" style="width: 50%">50</div>
           </div>
         </div>
         <div class="stat">
-          <div class="stat-label">🧼 Hygiene</div>
+          <div class="stat-label">Hygiene</div>
           <div class="stat-bar">
             <div class="stat-fill hygiene" id="hygieneBar" style="width: 50%">50</div>
           </div>
@@ -251,15 +525,15 @@
 
       <!-- Actions -->
       <div class="actions">
-        <button onclick="performAction('feed')">🍖 Feed</button>
-        <button onclick="performAction('play')">🎾 Play</button>
-        <button onclick="performAction('clean')">🧼 Clean</button>
-        <button onclick="performAction('sleep')">😴 Sleep</button>
+        <button onclick="performAction('feed')">Feed</button>
+        <button onclick="performAction('play')">Play</button>
+        <button onclick="performAction('clean')">Clean</button>
+        <button onclick="performAction('sleep')">Sleep</button>
       </div>
 
       <!-- Multiplayer -->
       <div class="multiplayer">
-        <h3>🌍 Multiplayer</h3>
+        <h3>Multiplayer</h3>
         <div class="actions">
           <button onclick="toggleWorld()">
             <span id="worldToggleText">Open World</span>
@@ -275,14 +549,14 @@
         </div>
 
         <div id="visitorDisplay" style="display: none;" class="visitor-info">
-          <strong>👋 Visitor:</strong> <span id="visitorName"></span><br>
+          <strong>Visitor:</strong> <span id="visitorName"></span><br>
           <span id="visitorStats"></span>
         </div>
       </div>
 
       <!-- AI Chat -->
       <div class="chat">
-        <h3>💬 Talk to your pet</h3>
+        <h3>Talk to your pet</h3>
         <div id="chatMessages"></div>
         <input type="text" id="chatInput" placeholder="Say something to your pet..." onkeypress="handleChatKey(event)">
         <button onclick="sendMessage()" style="margin-top: 10px; width: 100%;">Send</button>
@@ -308,6 +582,56 @@
     if (!userId) {
       userId = 'user-' + Math.random().toString(36).substring(2, 15);
       localStorage.setItem('pixelBuddyUserId', userId);
+    }
+
+    // ============================================================================
+    // THEME SYSTEM
+    // ============================================================================
+    function initTheme() {
+      // Load saved theme or default to pastel
+      const savedTheme = localStorage.getItem('pixelBuddyTheme') || 'pastel';
+      setTheme(savedTheme);
+
+      // Add click handlers to theme buttons
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const theme = btn.dataset.theme;
+          setTheme(theme);
+        });
+      });
+    }
+
+    function setTheme(theme) {
+      // Update data-theme attribute on body or html
+      if (theme === 'pastel') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', theme);
+      }
+
+      // Update active button
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        if (btn.dataset.theme === theme) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      // Save to localStorage
+      localStorage.setItem('pixelBuddyTheme', theme);
+
+      // Update meta theme-color for mobile browsers
+      const primaryColors = {
+        pastel: '#FF6B9D',
+        retro: '#00D9FF',
+        midnight: '#A78BFA',
+        nature: '#86EFAC'
+      };
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+      if (metaThemeColor) {
+        metaThemeColor.setAttribute('content', primaryColors[theme]);
+      }
     }
 
     // ============================================================================
@@ -616,6 +940,7 @@
     // ============================================================================
     // START APP
     // ============================================================================
+    initTheme();
     init();
   </script>
 </body>
