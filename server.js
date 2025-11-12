@@ -403,7 +403,7 @@ app.use((err, req, res, next) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`
   ╔═══════════════════════════════════════╗
-  ║      🐾 Pixel Buddy Server Started    ║
+  ║   🐾 Pixel Buddy Server Started 🎮    ║
   ╠═══════════════════════════════════════╣
   ║  Port: ${PORT.toString().padEnd(30)} ║
   ║  Environment: ${(process.env.NODE_ENV || 'development').padEnd(22)} ║

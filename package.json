@@ -8,7 +8,26 @@
     "dev": "nodemon server.js",
     "db:migrate": "node scripts/migrate.js",
     "db:seed": "node scripts/seed.js",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+
+    "docker:up": "./scripts/dev.sh up",
+    "docker:down": "./scripts/dev.sh down",
+    "docker:restart": "./scripts/dev.sh restart",
+    "docker:logs": "./scripts/dev.sh logs app",
+    "docker:logs:db": "./scripts/dev.sh logs db",
+    "docker:status": "./scripts/dev.sh status",
+    "docker:migrate": "./scripts/dev.sh db:migrate",
+    "docker:seed": "./scripts/dev.sh db:seed",
+    "docker:reset": "./scripts/dev.sh db:reset",
+    "docker:psql": "./scripts/dev.sh db:psql",
+    "docker:shell": "./scripts/dev.sh shell",
+    "docker:build": "./scripts/dev.sh build",
+    "docker:clean": "./scripts/dev.sh clean",
+
+    "up": "npm run docker:up",
+    "down": "npm run docker:down",
+    "logs": "npm run docker:logs",
+    "restart": "npm run docker:restart"
   },
   "keywords": [
     "tamagotchi",

@@ -1,0 +1,3 @@
+#!/bin/bash
+# Ultra-short wrapper for dev.sh
+exec ./scripts/dev.sh "$@"
