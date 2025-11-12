@@ -25,50 +25,40 @@ Pixel Buddy is a modern Tamagotchi-style virtual pet game with unique features:
 ## 🚀 Quick Start
 
 ### Prerequisites
-- **Node.js 18+** and npm
-- **PostgreSQL 14+** (or use Docker)
-- **Ollama** (optional, for AI features) - [Install from ollama.ai](https://ollama.ai)
+- **Docker & Docker Compose** (recommended)
+- **OR** Node.js 18+ and PostgreSQL 14+ (manual setup)
 
-### 1. Clone & Install
+### Option 1: Docker (Recommended - 30 seconds)
 ```bash
 git clone https://github.com/yourusername/pixel-buddy.git
 cd pixel-buddy
-npm install
+
+# Start everything (auto-creates database!)
+./dev up
+
+# Open browser
+open http://localhost:3000
+
+# That's it! 🎉
 ```
 
-### 2. Setup Database
+**All shortcuts:**
 ```bash
-# Start PostgreSQL (via Docker)
-docker run --name pixel-postgres \
-  -e POSTGRES_PASSWORD=mysecret \
-  -e POSTGRES_DB=pixel_buddy \
-  -p 5432:5432 -d postgres:16
-
-# Run migrations
-npm run db:migrate
-
-# (Optional) Seed sample data
-npm run db:seed
+./dev up          # Start everything
+./dev down        # Stop everything
+./dev logs        # View logs
+./dev status      # Check services
+./dev db:psql     # Database shell
+./dev help        # All commands
 ```
 
-### 3. Configure Environment
-```bash
-cp .env.example .env
-# Edit .env with your DATABASE_URL
-```
+### Option 2: Manual Setup
+See [DEVELOPMENT.md](DEVELOPMENT.md#-native-local-without-docker) for non-Docker installation.
 
-### 4. Start Server
-```bash
-npm run dev
-# Open http://localhost:3000
-```
-
-### 5. (Optional) Setup Ollama AI
-```bash
-# Install Ollama from https://ollama.ai
-ollama pull llama3.2:1b
-ollama serve
-```
+### 📚 Documentation
+- **[QUICKSTART.md](QUICKSTART.md)** - 30-second guide, common commands
+- **[DEVELOPMENT.md](DEVELOPMENT.md)** - Complete dev guide, Railway deployment
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Guidelines for contributors
 
 ---
 
@@ -94,34 +84,38 @@ ollama serve
 - **Public Browser**: Discover popular open worlds
 - **Visit Counter**: Track how many friends visited
 
-### Coming Soon
-- ☐ Death & Reincarnation system
-- ☐ Evolution/leveling based on care
-- ☐ Mini-games for stat bonuses
-- ☐ Co-op multiplayer actions
-- ☐ Pet-to-pet messaging
-- ☐ Sprite customization
-- ☐ Achievement system
-
 ---
 
 ## 🏗️ Architecture
 
 ```
 pixel-buddy/
+├── dev ⭐                      # Ultra-short dev command wrapper
+├── docker-compose.yml         # Local dev environment (PostgreSQL + App)
+├── Dockerfile.dev             # Development build (hot-reload)
+├── Dockerfile                 # Production build
+│
 ├── db/
-│   ├── schema.sql          # Database schema (5 tables)
-│   └── pool.js             # PostgreSQL connection pool
+│   ├── schema.sql             # Database schema (5 tables)
+│   └── pool.js                # PostgreSQL connection pool
+│
 ├── scripts/
-│   ├── migrate.js          # Database migration runner
-│   └── seed.js             # Sample data seeder
+│   ├── dev.sh                 # Full dev CLI (15+ commands)
+│   ├── migrate.js             # Database migration runner
+│   └── seed.js                # Sample data seeder
+│
 ├── public/
-│   ├── index.html          # Single-page app UI
-│   └── manifest.json       # PWA manifest
-├── server.js               # Express API server
-├── package.json
-├── Dockerfile              # Production container
-└── railway.json            # Railway deployment config
+│   ├── index.html             # Single-page app UI
+│   └── manifest.json          # PWA manifest
+│
+├── server.js                  # Express API server
+├── package.json               # Dependencies + npm shortcuts
+├── railway.json               # Railway deployment config
+│
+├── README.md                  # This file
+├── QUICKSTART.md ⭐           # 30-second quick start
+├── DEVELOPMENT.md ⭐          # Complete dev guide
+└── CONTRIBUTING.md ⭐         # Contributor guidelines
 ```
 
 ### Database Schema
@@ -264,38 +258,47 @@ Edit the prompt template in `server.js:243`
 
 ## 🗺️ Roadmap
 
-### Phase 1: MVP ✅
+**See [GitHub Issues](../../issues) for detailed feature requests and bug tracking.**
+
+### Phase 1: MVP ✅ (Complete)
 - [x] Basic pet with 4 stats
 - [x] CRUD actions (feed/play/clean/sleep)
-- [x] PostgreSQL persistence
+- [x] PostgreSQL persistence with triggers
 - [x] Simple multiplayer (visit by code)
-- [x] AI chat integration
+- [x] AI chat integration (Ollama)
+- [x] Docker development environment
+- [x] Hot-reload development workflow
+- [x] Railway deployment ready
 
-### Phase 2: Social Features
-- [ ] Death → Reincarnation with memory transfer
-- [ ] Public world browser with search
-- [ ] Pet-to-pet messaging system
-- [ ] QR codes for mobile sharing
-- [ ] Visit history & friend list
+### Phase 2: Social Features (See Issues #1-#7)
+- Death & Reincarnation with memory transfer
+- Public world browser with search UI
+- Pet-to-pet messaging system
+- QR codes for mobile sharing
+- Visit history & friend list
+- World discovery feed
 
-### Phase 3: Gameplay Depth
-- [ ] Mini-games (reflex, memory, etc.)
-- [ ] Evolution system (baby → adult → elder)
-- [ ] Achievements & rewards
-- [ ] Rare pet variants
-- [ ] Co-op multiplayer actions
+### Phase 3: Gameplay Depth (See Issues #8-#14)
+- Mini-games (reflex, memory, puzzle)
+- Evolution system (baby → adult → elder)
+- Achievements & rewards
+- Rare pet variants
+- Co-op multiplayer actions
+- Daily challenges
 
-### Phase 4: Advanced AI
-- [ ] Vector embeddings for memory search
-- [ ] Personality archetypes (cheerful, grumpy, etc.)
-- [ ] Dream generation (AI-created stories)
-- [ ] Pet learns from all multiplayer visits
+### Phase 4: Advanced AI (See Issues #15-#19)
+- Vector embeddings for semantic memory search
+- Personality archetypes (cheerful, grumpy, shy, energetic)
+- Dream generation (AI-created stories)
+- Pet learns from all multiplayer visits
+- Context-aware conversations
 
-### Phase 5: Mobile Native
-- [ ] React Native app
-- [ ] Push notifications for low stats
-- [ ] AR mode (pet in real world)
-- [ ] Voice commands
+### Phase 5: Mobile Native (See Issues #20-#24)
+- React Native app
+- Push notifications for low stats
+- AR mode (pet in real world)
+- Voice commands
+- Mobile-optimized UI
 
 ---
 
@@ -357,5 +360,29 @@ Senior Software Engineer
 **Questions?** Open an issue in the repository.
 **Deploy it?** Click the Railway button at the top!
 
-**Status**: 🟢 MVP Complete
+---
+
+## 📊 Project Status
+
+**Current State**: 🟢 MVP Complete + Production Ready
+
+✅ **Completed:**
+- Full-stack Tamagotchi game (4 stats, 4 actions)
+- PostgreSQL persistence with 5 tables
+- Multiplayer world system (share codes)
+- AI chat integration (Ollama + fallbacks)
+- Docker development environment
+- Hot-reload development workflow
+- Railway deployment configuration
+- Comprehensive documentation (README, QUICKSTART, DEVELOPMENT, CONTRIBUTING)
+
+🚧 **In Progress:**
+- See [GitHub Issues](../../issues) for current work
+
+📈 **Next Up:**
+- Death & Reincarnation system (#1)
+- Public world browser UI (#2)
+- Mini-games (#8-10)
+
 **Last Updated**: January 2025
+**Version**: 1.0.0

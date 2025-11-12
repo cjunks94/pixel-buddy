@@ -4,6 +4,38 @@ Complete guide for local development and deployment to Railway.
 
 ---
 
+## ⚡ Command Reference (Three Ways)
+
+### Option 1: Ultra-Short (Recommended)
+```bash
+./dev up              # Start everything
+./dev down            # Stop everything
+./dev logs            # View logs
+./dev status          # Check services
+./dev db:migrate      # Run migrations
+./dev db:psql         # Database shell
+./dev help            # All commands
+```
+
+### Option 2: NPM Scripts
+```bash
+npm run up            # Start
+npm run down          # Stop
+npm run logs          # View logs
+npm run docker:migrate   # Migrate database
+npm run docker:seed      # Seed database
+```
+
+### Option 3: Full Script Path
+```bash
+./dev up
+./dev down
+```
+
+**All examples below use `./dev` for brevity** - use whichever style you prefer!
+
+---
+
 ## 🚀 Quick Start (Docker - Recommended)
 
 ### Prerequisites
@@ -16,10 +48,10 @@ git clone https://github.com/yourusername/pixel-buddy.git
 cd pixel-buddy
 
 # Start everything (creates .env automatically)
-./scripts/dev.sh up
+./dev up
 
 # Run migrations
-./scripts/dev.sh db:migrate
+./dev db:migrate
 
 # Open browser
 open http://localhost:3000
@@ -32,7 +64,7 @@ open http://localhost:3000
 ## 📦 What's Running?
 
 ```bash
-./scripts/dev.sh status
+./dev status
 ```
 
 **Services:**
@@ -46,17 +78,17 @@ open http://localhost:3000
 
 ### Start Development
 ```bash
-./scripts/dev.sh up
+./dev up
 ```
 
 ### View Logs
 ```bash
 # All services
-./scripts/dev.sh logs
+./dev logs
 
 # Specific service
-./scripts/dev.sh logs app
-./scripts/dev.sh logs db
+./dev logs app
+./dev logs db
 ```
 
 ### Make Code Changes
@@ -66,12 +98,12 @@ open http://localhost:3000
 
 ### Stop Services
 ```bash
-./scripts/dev.sh down
+./dev down
 ```
 
 ### Restart Services
 ```bash
-./scripts/dev.sh restart
+./dev restart
 ```
 
 ---
@@ -80,17 +112,17 @@ open http://localhost:3000
 
 ### Run Migrations
 ```bash
-./scripts/dev.sh db:migrate
+./dev db:migrate
 ```
 
 ### Seed Sample Data
 ```bash
-./scripts/dev.sh db:seed
+./dev db:seed
 ```
 
 ### Open PostgreSQL Shell
 ```bash
-./scripts/dev.sh db:psql
+./dev db:psql
 
 # Then run SQL queries:
 pixel_buddy=# SELECT * FROM pets;
@@ -100,7 +132,7 @@ pixel_buddy=# \q     -- Quit
 
 ### Reset Database (⚠️ DESTRUCTIVE)
 ```bash
-./scripts/dev.sh db:reset
+./dev db:reset
 # This deletes ALL data and recreates tables
 ```
 
@@ -121,8 +153,8 @@ psql postgresql://postgres:pixel_secret_2025@localhost:5432/pixel_buddy
 ```bash
 # 1. Edit docker-compose.yml - uncomment the ollama service
 # 2. Restart services
-./scripts/dev.sh down
-./scripts/dev.sh up
+./dev down
+./dev up
 
 # 3. Pull AI model
 docker-compose exec ollama ollama pull llama3.2:1b
@@ -161,7 +193,7 @@ OLLAMA_URL=http://localhost:11434
 
 ### Open App Shell
 ```bash
-./scripts/dev.sh shell
+./dev shell
 
 # Inside container:
 /app $ npm run db:migrate
@@ -171,13 +203,13 @@ OLLAMA_URL=http://localhost:11434
 
 ### Run Tests
 ```bash
-./scripts/dev.sh test
+./dev test
 ```
 
 ### Rebuild Containers
 ```bash
 # Rebuild after changing Dockerfile or package.json
-./scripts/dev.sh build
+./dev build
 
 # Force rebuild with no cache
 docker-compose build --no-cache
@@ -185,7 +217,7 @@ docker-compose build --no-cache
 
 ### Clean Everything (⚠️ DESTRUCTIVE)
 ```bash
-./scripts/dev.sh clean
+./dev clean
 # Removes containers, volumes, images
 ```
 
@@ -289,8 +321,8 @@ Railway doesn't have a native Ollama service yet. Options:
 ### Manual Testing Checklist
 ```bash
 # Start app
-./scripts/dev.sh up
-./scripts/dev.sh db:migrate
+./dev up
+./dev db:migrate
 
 # Test in browser (http://localhost:3000)
 - [ ] Pet appears and animates
@@ -304,7 +336,7 @@ Railway doesn't have a native Ollama service yet. Options:
 - [ ] Page refresh keeps pet alive
 
 # Test database
-./scripts/dev.sh db:psql
+./dev db:psql
 SELECT * FROM pets;
 SELECT * FROM memories;
 ```
@@ -333,13 +365,13 @@ APP_PORT=3001
 ### Database Connection Failed
 ```bash
 # Check if PostgreSQL is running
-./scripts/dev.sh status
+./dev status
 
 # Restart database
 docker-compose restart db
 
 # Check logs
-./scripts/dev.sh logs db
+./dev logs db
 ```
 
 ### Hot-Reload Not Working
@@ -348,7 +380,7 @@ docker-compose restart db
 docker-compose restart app
 
 # Check logs for errors
-./scripts/dev.sh logs app
+./dev logs app
 ```
 
 ### Ollama Not Responding
@@ -369,7 +401,7 @@ docker-compose exec ollama ollama pull llama3.2:1b
 docker system prune -a
 
 # Or use our clean command (removes project volumes)
-./scripts/dev.sh clean
+./dev clean
 ```
 
 ---
@@ -436,8 +468,8 @@ DB_PASSWORD=your_new_password
 DATABASE_URL=postgresql://postgres:your_new_password@db:5432/pixel_buddy
 
 # Restart
-./scripts/dev.sh down
-./scripts/dev.sh up
+./dev down
+./dev up
 ```
 
 ### Add New API Endpoint
@@ -448,8 +480,8 @@ DATABASE_URL=postgresql://postgres:your_new_password@db:5432/pixel_buddy
 
 ### Modify Database Schema
 1. Edit `db/schema.sql`
-2. Run migration: `./scripts/dev.sh db:migrate`
-3. Or reset: `./scripts/dev.sh db:reset`
+2. Run migration: `./dev db:migrate`
+3. Or reset: `./dev db:reset`
 
 ---
 
@@ -457,7 +489,7 @@ DATABASE_URL=postgresql://postgres:your_new_password@db:5432/pixel_buddy
 
 ### View Service Status
 ```bash
-./scripts/dev.sh status
+./dev status
 ```
 
 ### Check Health Endpoint
@@ -467,12 +499,12 @@ curl http://localhost:3000/health
 
 ### Watch Logs in Real-Time
 ```bash
-./scripts/dev.sh logs app
+./dev logs app
 ```
 
 ### Database Metrics
 ```bash
-./scripts/dev.sh db:psql
+./dev db:psql
 
 # Inside psql:
 SELECT COUNT(*) FROM pets;
@@ -499,9 +531,9 @@ SELECT pg_size_pretty(pg_database_size('pixel_buddy'));
 
 **Local Development:**
 ```bash
-./scripts/dev.sh up        # Start developing
-./scripts/dev.sh db:seed   # Add sample data
-./scripts/dev.sh logs      # Debug issues
+./dev up        # Start developing
+./dev db:seed   # Add sample data
+./dev logs      # Debug issues
 ```
 
 **Ready to Deploy:**
@@ -513,7 +545,7 @@ git push origin main       # Push to GitHub
 **Need Help?**
 - Check troubleshooting section above
 - Open an issue on GitHub
-- View logs: `./scripts/dev.sh logs`
+- View logs: `./dev logs`
 
 ---
 
