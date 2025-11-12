@@ -968,11 +968,34 @@
     }
 
     // ============================================================================
+    // STAT SYNC (persist to database)
+    // ============================================================================
+    async function syncStats() {
+      if (!pet || !pet.id) return;
+
+      try {
+        await fetch(`${API}/pet/${pet.id}/sync`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            hunger: Math.round(pet.hunger),
+            happiness: Math.round(pet.happiness),
+            energy: Math.round(pet.energy),
+            hygiene: Math.round(pet.hygiene)
+          })
+        });
+      } catch (error) {
+        console.error('Stat sync error:', error);
+        // Fail silently - we'll try again next interval
+      }
+    }
+
+    // ============================================================================
     // STAT DECAY (simulate life)
     // ============================================================================
     function startStatDecay() {
+      // Decay stats every minute
       setInterval(async () => {
-        // Decay stats slightly over time (every minute)
         pet.hunger = Math.max(0, pet.hunger - 1);
         pet.happiness = Math.max(0, pet.happiness - 0.5);
         pet.energy = Math.max(0, pet.energy - 0.5);
@@ -985,6 +1008,30 @@
           alert('⚠️ Your pet needs urgent care!');
         }
       }, 60000); // Every minute
+
+      // Sync stats to database every 5 seconds
+      setInterval(syncStats, 5000);
+
+      // Sync on page unload
+      window.addEventListener('beforeunload', () => {
+        // Use sendBeacon for reliable sync on page close
+        if (pet && pet.id) {
+          const data = new Blob([JSON.stringify({
+            hunger: Math.round(pet.hunger),
+            happiness: Math.round(pet.happiness),
+            energy: Math.round(pet.energy),
+            hygiene: Math.round(pet.hygiene)
+          })], { type: 'application/json' });
+          navigator.sendBeacon(`${API}/pet/${pet.id}/sync`, data);
+        }
+      });
+
+      // Sync when tab becomes hidden
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          syncStats();
+        }
+      });
     }
 
     // ============================================================================

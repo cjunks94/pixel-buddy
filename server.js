@@ -204,6 +204,31 @@ app.post('/api/pet/:id/rename', async (req, res) => {
   }
 });
 
+// Sync pet stats (for periodic frontend updates)
+app.post('/api/pet/:id/sync', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { hunger, happiness, energy, hygiene } = req.body;
+
+    // Validate stats are within bounds
+    const clamp = (val) => Math.max(0, Math.min(100, val));
+
+    const result = await pool.query(
+      'UPDATE pets SET hunger = $1, happiness = $2, energy = $3, hygiene = $4 WHERE id = $5 RETURNING *',
+      [clamp(hunger), clamp(happiness), clamp(energy), clamp(hygiene), id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Pet not found' });
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error syncing pet:', error);
+    res.status(500).json({ error: 'Failed to sync pet' });
+  }
+});
+
 // ============================================================================
 // MULTIPLAYER ROUTES
 // ============================================================================
