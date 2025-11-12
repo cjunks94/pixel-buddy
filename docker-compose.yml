@@ -1,0 +1,79 @@
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    container_name: pixel-buddy-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: pixel_buddy
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-pixel_secret_2025}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pixel-buddy-network
+
+  # Pixel Buddy App (Development with hot-reload)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: pixel-buddy-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-pixel_secret_2025}@db:5432/pixel_buddy
+      PORT: 3000
+      NODE_ENV: development
+      OLLAMA_URL: ${OLLAMA_URL:-http://ollama:11434}
+      CORS_ORIGIN: "*"
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    volumes:
+      # Mount source code for hot-reload
+      - ./server.js:/app/server.js
+      - ./db:/app/db
+      - ./scripts:/app/scripts
+      - ./public:/app/public
+      # Use named volume for node_modules (avoid overwriting)
+      - node_modules:/app/node_modules
+    networks:
+      - pixel-buddy-network
+    command: npm run dev
+
+  # Ollama (Optional - AI features)
+  # Uncomment to enable local AI chat
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: pixel-buddy-ollama
+  #   restart: unless-stopped
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama_data:/root/.ollama
+  #   networks:
+  #     - pixel-buddy-network
+  #   # Pull model on startup (uncomment and customize)
+  #   # entrypoint: ["/bin/bash", "-c", "ollama serve & sleep 5 && ollama pull llama3.2:1b && wait"]
+
+networks:
+  pixel-buddy-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  node_modules:
+    driver: local
+  # ollama_data:
+  #   driver: local
