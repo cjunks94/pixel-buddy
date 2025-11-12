@@ -512,7 +512,7 @@
       <!-- Pet Name -->
       <div style="text-align: center; margin: 15px 0;">
         <h2 id="petName">Buddy</h2>
-        <button onclick="renamePet()" aria-label="Rename your pet">Rename</button>
+        <button id="renameBtn" aria-label="Rename your pet">Rename</button>
       </div>
 
       <!-- Stats -->
@@ -545,20 +545,20 @@
 
       <!-- Actions -->
       <div class="actions" role="group" aria-label="Pet care actions">
-        <button onclick="performAction('feed')" aria-label="Feed your pet">Feed</button>
-        <button onclick="performAction('play')" aria-label="Play with your pet">Play</button>
-        <button onclick="performAction('clean')" aria-label="Clean your pet">Clean</button>
-        <button onclick="performAction('sleep')" aria-label="Put your pet to sleep">Sleep</button>
+        <button data-action="feed" aria-label="Feed your pet">Feed</button>
+        <button data-action="play" aria-label="Play with your pet">Play</button>
+        <button data-action="clean" aria-label="Clean your pet">Clean</button>
+        <button data-action="sleep" aria-label="Put your pet to sleep">Sleep</button>
       </div>
 
       <!-- Multiplayer -->
       <div class="multiplayer">
         <h3>Multiplayer</h3>
         <div class="actions">
-          <button onclick="toggleWorld()">
+          <button id="toggleWorldBtn">
             <span id="worldToggleText">Open World</span>
           </button>
-          <button onclick="visitWorld()">Visit Friend</button>
+          <button id="visitWorldBtn">Visit Friend</button>
         </div>
 
         <div id="worldCodeDisplay" style="display: none;">
@@ -578,8 +578,8 @@
       <div class="chat">
         <h3>Talk to your pet</h3>
         <div id="chatMessages"></div>
-        <input type="text" id="chatInput" placeholder="Say something to your pet..." onkeypress="handleChatKey(event)">
-        <button onclick="sendMessage()" style="margin-top: 10px; width: 100%;">Send</button>
+        <input type="text" id="chatInput" placeholder="Say something to your pet...">
+        <button id="sendMessageBtn" style="margin-top: 10px; width: 100%;">Send</button>
       </div>
     </div>
   </div>
@@ -939,10 +939,32 @@
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    function handleChatKey(event) {
-      if (event.key === 'Enter') {
-        sendMessage();
-      }
+    // ============================================================================
+    // EVENT LISTENERS
+    // ============================================================================
+    function initEventListeners() {
+      // Rename button
+      document.getElementById('renameBtn').addEventListener('click', renamePet);
+
+      // Action buttons (feed, play, clean, sleep)
+      document.querySelectorAll('button[data-action]').forEach(button => {
+        button.addEventListener('click', () => {
+          const action = button.dataset.action;
+          performAction(action);
+        });
+      });
+
+      // Multiplayer buttons
+      document.getElementById('toggleWorldBtn').addEventListener('click', toggleWorld);
+      document.getElementById('visitWorldBtn').addEventListener('click', visitWorld);
+
+      // Chat functionality
+      document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
+      document.getElementById('chatInput').addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          sendMessage();
+        }
+      });
     }
 
     // ============================================================================
@@ -969,6 +991,7 @@
     // START APP
     // ============================================================================
     initTheme();
+    initEventListeners();
     init();
   </script>
 </body>
