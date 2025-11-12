@@ -31,8 +31,10 @@
       --bg-dark: #FFD1DC;
       --text-dark: #4A4A4A;
       --text-light: #FFFFFF;
+      --button-text: #FFFFFF;
       --border: #FFC1D8;
       --shadow: rgba(255, 107, 157, 0.15);
+      --focus-ring: rgba(255, 107, 157, 0.5);
 
       --stat-hunger: linear-gradient(90deg, #FF6B6B, #FF8E53);
       --stat-happiness: linear-gradient(90deg, #FFD93D, #FFC93C);
@@ -57,9 +59,11 @@
       --bg-medium: #16213E;
       --bg-dark: #0F1620;
       --text-dark: #FFFFFF;
-      --text-light: #00D9FF;
+      --text-light: #FFFFFF;
+      --button-text: #0F1620;  /* Dark text on cyan buttons */
       --border: #00D9FF;
       --shadow: rgba(0, 217, 255, 0.3);
+      --focus-ring: rgba(0, 217, 255, 0.5);
 
       --stat-hunger: linear-gradient(90deg, #FF6EC7, #FF8EDB);
       --stat-happiness: linear-gradient(90deg, #FFF44F, #FFEB3B);
@@ -76,9 +80,11 @@
       --bg-medium: #334155;
       --bg-dark: #0F172A;
       --text-dark: #F1F5F9;
-      --text-light: #CBD5E1;
+      --text-light: #FFFFFF;
+      --button-text: #FFFFFF;  /* White text on purple buttons */
       --border: #475569;
       --shadow: rgba(167, 139, 250, 0.2);
+      --focus-ring: rgba(167, 139, 250, 0.5);
 
       --stat-hunger: linear-gradient(90deg, #F472B6, #FB7185);
       --stat-happiness: linear-gradient(90deg, #FCD34D, #FBBF24);
@@ -96,8 +102,10 @@
       --bg-dark: #FDE68A;
       --text-dark: #365314;
       --text-light: #166534;
+      --button-text: #166534;  /* Dark green text on mint buttons */
       --border: #BEF264;
       --shadow: rgba(134, 239, 172, 0.2);
+      --focus-ring: rgba(134, 239, 172, 0.5);
 
       --stat-hunger: linear-gradient(90deg, #FB923C, #FDBA74);
       --stat-happiness: linear-gradient(90deg, #FDE047, #FEF08A);
@@ -287,7 +295,7 @@
     button {
       background: var(--primary);
       border: none;
-      color: var(--text-light);
+      color: var(--button-text);
       padding: clamp(12px, 3vw, 16px) clamp(16px, 4vw, 24px);
       border-radius: var(--border-radius-sm);
       font-size: clamp(0.9rem, 2.5vw, 1rem);
@@ -304,6 +312,11 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 12px var(--shadow);
       filter: brightness(1.1);
+    }
+
+    button:focus {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
     }
 
     button:active {
@@ -380,9 +393,16 @@
     }
 
     #chatInput:focus {
-      outline: none;
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px var(--shadow);
+    }
+
+    /* Focus indicators for accessibility */
+    *:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
     }
 
     .message {
@@ -487,48 +507,48 @@
 
     <div id="game" style="display: none;">
       <!-- Pet Display -->
-      <canvas id="petCanvas" width="400" height="400"></canvas>
+      <canvas id="petCanvas" width="400" height="400" role="img" aria-label="Your virtual pet animation"></canvas>
 
       <!-- Pet Name -->
       <div style="text-align: center; margin: 15px 0;">
         <h2 id="petName">Buddy</h2>
-        <button onclick="renamePet()">Rename</button>
+        <button onclick="renamePet()" aria-label="Rename your pet">Rename</button>
       </div>
 
       <!-- Stats -->
-      <div class="stats">
+      <div class="stats" role="region" aria-label="Pet statistics">
         <div class="stat">
-          <div class="stat-label">Hunger</div>
-          <div class="stat-bar">
+          <div class="stat-label" id="hungerLabel">Hunger</div>
+          <div class="stat-bar" role="progressbar" aria-labelledby="hungerLabel" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
             <div class="stat-fill hunger" id="hungerBar" style="width: 50%">50</div>
           </div>
         </div>
         <div class="stat">
-          <div class="stat-label">Happiness</div>
-          <div class="stat-bar">
+          <div class="stat-label" id="happinessLabel">Happiness</div>
+          <div class="stat-bar" role="progressbar" aria-labelledby="happinessLabel" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
             <div class="stat-fill happiness" id="happinessBar" style="width: 50%">50</div>
           </div>
         </div>
         <div class="stat">
-          <div class="stat-label">Energy</div>
-          <div class="stat-bar">
+          <div class="stat-label" id="energyLabel">Energy</div>
+          <div class="stat-bar" role="progressbar" aria-labelledby="energyLabel" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
             <div class="stat-fill energy" id="energyBar" style="width: 50%">50</div>
           </div>
         </div>
         <div class="stat">
-          <div class="stat-label">Hygiene</div>
-          <div class="stat-bar">
+          <div class="stat-label" id="hygieneLabel">Hygiene</div>
+          <div class="stat-bar" role="progressbar" aria-labelledby="hygieneLabel" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
             <div class="stat-fill hygiene" id="hygieneBar" style="width: 50%">50</div>
           </div>
         </div>
       </div>
 
       <!-- Actions -->
-      <div class="actions">
-        <button onclick="performAction('feed')">Feed</button>
-        <button onclick="performAction('play')">Play</button>
-        <button onclick="performAction('clean')">Clean</button>
-        <button onclick="performAction('sleep')">Sleep</button>
+      <div class="actions" role="group" aria-label="Pet care actions">
+        <button onclick="performAction('feed')" aria-label="Feed your pet">Feed</button>
+        <button onclick="performAction('play')" aria-label="Play with your pet">Play</button>
+        <button onclick="performAction('clean')" aria-label="Clean your pet">Clean</button>
+        <button onclick="performAction('sleep')" aria-label="Put your pet to sleep">Sleep</button>
       </div>
 
       <!-- Multiplayer -->
@@ -676,8 +696,16 @@
 
     function updateStat(stat, value) {
       const bar = document.getElementById(`${stat}Bar`);
+      const container = bar.parentElement;
+      const roundedValue = Math.round(value);
+
       bar.style.width = value + '%';
-      bar.textContent = Math.round(value);
+      bar.textContent = roundedValue;
+
+      // Update ARIA attribute for screen readers
+      if (container) {
+        container.setAttribute('aria-valuenow', roundedValue);
+      }
     }
 
     // ============================================================================
