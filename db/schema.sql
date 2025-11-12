@@ -96,6 +96,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_update_last_seen ON pets;
 CREATE TRIGGER trigger_update_last_seen
   BEFORE UPDATE ON pets
   FOR EACH ROW
