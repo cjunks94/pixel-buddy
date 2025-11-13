@@ -21,6 +21,68 @@ services:
     networks:
       - pixel-buddy-network
 
+  # Ollama AI Service (Local LLM for pet chat)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: pixel-buddy-ollama
+    restart: unless-stopped
+    ports:
+      - "${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - pixel-buddy-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s  # Allow time for model download
+    deploy:
+      resources:
+        limits:
+          memory: ${OLLAMA_MEMORY_LIMIT:-4G}
+        reservations:
+          memory: ${OLLAMA_MEMORY_RESERVE:-2G}
+    environment:
+      - OLLAMA_NUM_PARALLEL=${OLLAMA_NUM_PARALLEL:-2}
+      - OLLAMA_MAX_QUEUE=${OLLAMA_MAX_QUEUE:-128}
+      - OLLAMA_KEEP_ALIVE=${OLLAMA_KEEP_ALIVE:-5m}
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        #!/bin/bash
+        set -e
+        echo "🤖 Starting Ollama AI service..."
+
+        # Start Ollama in background
+        /bin/ollama serve &
+        OLLAMA_PID=$!
+
+        # Wait for Ollama to be ready
+        echo "⏳ Waiting for Ollama to start..."
+        for i in {1..30}; do
+          if curl -s http://localhost:11434/ > /dev/null 2>&1; then
+            echo "✅ Ollama server is ready!"
+            break
+          fi
+          echo "   Attempt $i/30..."
+          sleep 2
+        done
+
+        # Pull llama3.2:1b if not already present
+        echo "📥 Checking for llama3.2:1b model..."
+        if ! ollama list | grep -q "llama3.2:1b"; then
+          echo "📥 Downloading llama3.2:1b (1.3GB)..."
+          ollama pull llama3.2:1b
+          echo "✅ Model ready!"
+        else
+          echo "✅ Model already downloaded"
+        fi
+
+        echo "🚀 Ollama ready for AI chat!"
+        wait $OLLAMA_PID
+
   # Pixel Buddy App (Development with hot-reload)
   app:
     build:
@@ -30,6 +92,8 @@ services:
     restart: unless-stopped
     depends_on:
       db:
+        condition: service_healthy
+      ollama:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-pixel_secret_2025}@db:5432/pixel_buddy
@@ -51,21 +115,6 @@ services:
       - pixel-buddy-network
     command: npm run dev
 
-  # Ollama (Optional - AI features)
-  # Uncomment to enable local AI chat
-  # ollama:
-  #   image: ollama/ollama:latest
-  #   container_name: pixel-buddy-ollama
-  #   restart: unless-stopped
-  #   ports:
-  #     - "11434:11434"
-  #   volumes:
-  #     - ollama_data:/root/.ollama
-  #   networks:
-  #     - pixel-buddy-network
-  #   # Pull model on startup (uncomment and customize)
-  #   # entrypoint: ["/bin/bash", "-c", "ollama serve & sleep 5 && ollama pull llama3.2:1b && wait"]
-
 networks:
   pixel-buddy-network:
     driver: bridge
@@ -75,5 +124,5 @@ volumes:
     driver: local
   node_modules:
     driver: local
-  # ollama_data:
-  #   driver: local
+  ollama_data:
+    driver: local
