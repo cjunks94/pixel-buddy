@@ -120,8 +120,9 @@ app.post('/api/pet/:id/action', actionLimiter, async (req, res) => {
     const { action } = req.body; // 'feed', 'play', 'clean', 'sleep'
 
     // Calculate stat changes based on action
+    // Note: hunger = fullness (100 = full, 0 = starving)
     const updates = {
-      feed: { hunger: -30, last_fed: true },
+      feed: { hunger: 30, last_fed: true },
       play: { happiness: 20, energy: -10, last_played: true },
       clean: { hygiene: 40, last_cleaned: true },
       sleep: { energy: 30, last_slept: true }

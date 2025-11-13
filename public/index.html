@@ -243,89 +243,66 @@
 
     .stat-bar {
       background: var(--bg-medium);
-      height: 24px;
-      border-radius: 8px;
+      height: 20px;
+      border-radius: 10px;
       overflow: hidden;
       position: relative;
-      border: 1px solid var(--border);
+      border: 2px solid var(--border);
     }
 
     .stat-fill {
       height: 100%;
-      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: width 0.3s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: clamp(0.75rem, 2vw, 0.85rem);
-      font-weight: bold;
+      font-size: clamp(0.7rem, 2vw, 0.8rem);
+      font-weight: 600;
       color: var(--text-light);
-      position: relative;
-      overflow: hidden;
+      border-radius: 8px;
     }
 
-    /* Shimmer effect */
-    .stat-fill::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(255,255,255,0.3) 50%,
-        transparent 100%
-      );
-      animation: shimmer 2s infinite;
-    }
-
-    @keyframes shimmer {
-      to { left: 100%; }
-    }
-
-    .stat-fill.hunger { background: var(--stat-hunger); }
-    .stat-fill.happiness { background: var(--stat-happiness); }
-    .stat-fill.energy { background: var(--stat-energy); }
-    .stat-fill.hygiene { background: var(--stat-hygiene); }
+    .stat-fill.hunger { background: var(--primary); }
+    .stat-fill.happiness { background: var(--secondary); }
+    .stat-fill.energy { background: var(--accent); }
+    .stat-fill.hygiene { background: var(--primary); opacity: 0.8; }
 
     /* ========================================
-       BUTTONS (TOUCH-OPTIMIZED)
+       BUTTONS (MINIMALISTIC)
        ======================================== */
 
     button {
       background: var(--primary);
-      border: none;
+      border: 2px solid var(--primary);
       color: var(--button-text);
-      padding: clamp(12px, 3vw, 16px) clamp(16px, 4vw, 24px);
-      border-radius: var(--border-radius-sm);
-      font-size: clamp(0.9rem, 2.5vw, 1rem);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: clamp(0.85rem, 2.5vw, 0.95rem);
       cursor: pointer;
       font-weight: 600;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
       font-family: 'Courier New', monospace;
       min-height: 44px;
-      min-width: 100px;
-      box-shadow: 0 2px 8px var(--shadow);
+      min-width: 90px;
     }
 
     button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px var(--shadow);
-      filter: brightness(1.1);
+      opacity: 0.9;
+      transform: translateY(-1px);
     }
 
     button:focus {
-      outline: 3px solid var(--focus-ring);
+      outline: 2px solid var(--focus-ring);
       outline-offset: 2px;
     }
 
     button:active {
       transform: translateY(0);
-      box-shadow: 0 1px 4px var(--shadow);
+      opacity: 1;
     }
 
     button:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
       transform: none;
     }
