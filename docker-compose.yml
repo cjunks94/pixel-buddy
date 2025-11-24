@@ -93,8 +93,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      ollama:
-        condition: service_healthy
+      # ollama:
+      #   condition: service_healthy  # Commented out - using native Ollama instead
     environment:
       DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-pixel_secret_2025}@db:5432/pixel_buddy
       PORT: 3000

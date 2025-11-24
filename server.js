@@ -12,7 +12,10 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 const axios = require('axios');
+const passport = require('./auth/passport');
+const cookieParser = require('cookie-parser');
 const { pool, healthCheck } = require('./db/pool');
+const { auditMiddleware } = require('./utils/audit');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -41,6 +44,13 @@ app.use(cors({
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+// Initialize Passport
+app.use(passport.initialize());
+
+// Audit middleware (attach audit logger to requests)
+app.use(auditMiddleware);
 
 // Request logging
 app.use((req, res, next) => {
@@ -57,6 +67,13 @@ const actionLimiter = rateLimit({
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
+
+// ============================================================================
+// AUTHENTICATION ROUTES
+// ============================================================================
+
+const authRoutes = require('./auth/routes');
+app.use('/api/auth', authRoutes);
 
 // ============================================================================
 // API ROUTES
@@ -372,6 +389,7 @@ app.post('/api/pet/:id/talk', actionLimiter, async (req, res) => {
 
       res.json({ response: aiResponse });
     } catch (ollamaError) {
+      console.warn('Ollama error:', ollamaError.message);
       console.warn('Ollama not available, using fallback response');
       const fallbackResponses = {
         low_stats: `*tired* I'm not feeling great... maybe some care would help?`,
