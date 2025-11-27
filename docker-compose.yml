@@ -109,6 +109,9 @@ services:
       - ./db:/app/db
       - ./scripts:/app/scripts
       - ./public:/app/public
+      - ./auth:/app/auth
+      - ./utils:/app/utils
+      - ./middleware:/app/middleware
       # Use named volume for node_modules (avoid overwriting)
       - node_modules:/app/node_modules
     networks:

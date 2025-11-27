@@ -1,0 +1,415 @@
+:root {
+    /* Base Palette (Pastel Default) */
+    --bg-shell: #f0f0f4;
+    --bg-screen: #fdf6e3;
+    --primary: #ff6b9d;
+    --secondary: #4ecdc4;
+    --text-main: #4a4a4a;
+    --btn-bg: #fff;
+    --btn-text: #4a4a4a;
+    --btn-hover-text: #fff;
+    --pixel-size: 4px;
+    --font-ui: 'Courier New', 'Monaco', 'Consolas', monospace;
+    --font-body: 'Courier New', monospace;
+}
+
+[data-theme="retro"] {
+    --bg-shell: #2b2b2b;
+    --bg-screen: #9bbc0f;
+    --primary: #0f380f;
+    --secondary: #306230;
+    --text-main: #0f380f;
+    --btn-bg: #8bac0f;
+    --btn-text: #0f380f;
+    --btn-hover-text: #9bbc0f;
+}
+
+[data-theme="midnight"] {
+    --bg-shell: #1a1b26;
+    --bg-screen: #24283b;
+    --primary: #7aa2f7;
+    --secondary: #bb9af7;
+    --text-main: #c0caf5;
+    --btn-bg: #414868;
+    --btn-text: #c0caf5;
+    --btn-hover-text: #1a1b26;
+}
+
+[data-theme="nature"] {
+    --bg-shell: #3e6b35;
+    --bg-screen: #e8f5e9;
+    --primary: #2e7d32;
+    --secondary: #66bb6a;
+    --text-main: #1b5e20;
+    --btn-bg: #c8e6c9;
+    --btn-text: #1b5e20;
+    --btn-hover-text: #fff;
+}
+
+/* Reset & Base */
+* { box-sizing: border-box; touch-action: manipulation; }
+
+body {
+    background: #222;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: var(--font-ui);
+    overflow: hidden;
+    margin: 0;
+    padding: 20px;
+}
+
+/* The "Device" */
+.device-shell {
+    background: var(--bg-shell);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow:
+        inset -5px -5px 10px rgba(0,0,0,0.2),
+        inset 5px 5px 10px rgba(255,255,255,0.1),
+        0 20px 50px rgba(0,0,0,0.5);
+    max-width: 400px;
+    width: 100%;
+    position: relative;
+}
+
+.screen-bezel {
+    background: #000;
+    padding: 10px;
+    border-radius: 10px 10px 40px 10px;
+}
+
+.screen-content {
+    background: var(--bg-screen);
+    border-radius: 4px;
+    padding: 15px;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: relative;
+    color: var(--text-main);
+    image-rendering: pixelated;
+}
+
+/* HUD */
+.hud {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    border-bottom: 2px solid var(--text-main);
+    padding-bottom: 5px;
+}
+
+.hud-name {
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.hud-status {
+    opacity: 0.7;
+}
+
+/* Canvas Viewport */
+.viewport {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    min-height: 150px;
+}
+
+canvas {
+    width: 256px;
+    height: 256px;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* Stats Container */
+.stats-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Pixel Bars */
+.stat-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+}
+
+.stat-row label {
+    width: 35px;
+    text-align: right;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.pixel-bar {
+    flex-grow: 1;
+    height: 12px;
+    background: rgba(0,0,0,0.1);
+    border: 2px solid var(--text-main);
+    padding: 1px;
+}
+
+.pixel-bar .fill {
+    height: 100%;
+    width: 50%;
+    background: var(--primary);
+    transition: width 0.3s steps(5); /* Stepped animation for retro feel */
+}
+
+/* Buttons */
+.controls-area {
+    margin-top: auto;
+}
+
+.d-pad-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.pixel-btn {
+    background: var(--btn-bg);
+    border: 2px solid var(--text-main);
+    color: var(--btn-text);
+    padding: 14px 10px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+    transition: transform 0.1s, box-shadow 0.1s, background 0.1s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.pixel-btn:hover {
+    background: var(--primary);
+    color: var(--btn-hover-text);
+    border-color: var(--primary);
+}
+
+.pixel-btn:focus {
+    outline: 3px solid var(--secondary);
+    outline-offset: 2px;
+}
+
+.pixel-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+}
+
+/* System Tray */
+.system-tray {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    border-top: 2px dashed var(--text-main);
+    padding-top: 10px;
+}
+
+.icon-btn {
+    background: var(--btn-bg);
+    border: 2px solid var(--text-main);
+    font-size: 10px;
+    font-family: var(--font-ui);
+    font-weight: bold;
+    color: var(--btn-text);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    padding: 8px 12px;
+}
+
+.icon-btn:hover {
+    background: var(--primary);
+    color: var(--btn-hover-text);
+    border-color: var(--primary);
+}
+
+.icon-btn:focus {
+    outline: 3px solid var(--secondary);
+    outline-offset: 2px;
+}
+
+/* Drawers & Overlays */
+.drawer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-shell);
+    padding: 20px;
+    border-top: 4px solid var(--text-main);
+    transform: translateY(0);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 100;
+}
+
+.drawer.hidden {
+    transform: translateY(110%);
+}
+
+.drawer-content {
+    text-align: center;
+}
+
+.drawer-content h2 {
+    font-size: 16px;
+    letter-spacing: 3px;
+    margin: 10px 0;
+    color: var(--primary);
+}
+
+.drawer-content p {
+    font-size: 11px;
+    margin-bottom: 5px;
+    color: var(--btn-text);
+}
+
+.drawer-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.drawer-actions button {
+    background: var(--btn-bg);
+    border: 2px solid var(--text-main);
+    color: var(--btn-text);
+    padding: 12px 20px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.drawer-actions button:hover {
+    background: var(--primary);
+    color: var(--btn-hover-text);
+}
+
+.drawer-actions button:focus {
+    outline: 3px solid var(--secondary);
+    outline-offset: 2px;
+}
+
+/* Chat Input */
+#chatInput {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--text-main);
+    background: var(--bg-screen);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    font-size: 16px;
+}
+
+#chatInput:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* Chat Bubble */
+.chat-bubble {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    border: 2px solid #000;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    max-width: 80%;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+    z-index: 50;
+}
+
+.chat-bubble.hidden {
+    display: none;
+}
+
+/* Theme Dots */
+.system-controls {
+    position: absolute;
+    top: -30px;
+    right: 0;
+    display: flex;
+    gap: 5px;
+}
+
+.theme-dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    padding: 0;
+}
+
+.theme-dot:hover {
+    transform: scale(1.2);
+}
+
+.theme-dot.active {
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.5);
+}
+
+.theme-dot.pastel { background: #ff6b9d; }
+.theme-dot.retro { background: #9bbc0f; }
+.theme-dot.midnight { background: #7aa2f7; }
+.theme-dot.nature { background: #4caf50; }
+
+/* Utility */
+.hidden {
+    display: none !important;
+}
+
+/* Responsive */
+@media (max-width: 420px) {
+    body {
+        padding: 10px;
+    }
+
+    .device-shell {
+        padding: 15px;
+    }
+
+    .screen-content {
+        min-height: 450px;
+        padding: 10px;
+    }
+
+    canvas {
+        width: 200px;
+        height: 200px;
+    }
+
+    .pixel-btn {
+        padding: 12px 8px;
+        font-size: 10px;
+    }
+
+    .icon-btn {
+        padding: 6px 10px;
+        font-size: 9px;
+    }
+
+    .stat-row {
+        font-size: 10px;
+    }
+}
